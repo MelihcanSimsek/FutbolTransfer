@@ -34,17 +34,17 @@ namespace Business.Concrete
 
         public IDataResult<User> Login(UserForLoginDto userForLogin)
         {
-            var userToCheck = _userService.GetByEmail(userForLogin.Email);
-            if( !userToCheck.Success)
+            var userToCheck = _userService.GetByEmail(userForLogin.Email).Data;
+            if(userToCheck == null)
             {
-                return new ErrorDataResult<User>(userToCheck.Message);
+                return new ErrorDataResult<User>(userToCheck,Messages.UserNotFound);
             }
-            if (!HashingHelper.VerifyPasswordHash(userForLogin.Password, userToCheck.Data.PasswordHash, userToCheck.Data.PasswordSalt))
+            if (!HashingHelper.VerifyPasswordHash(userForLogin.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
             {
                 return new ErrorDataResult<User>(Messages.PasswordError);
             }
 
-            return new SuccessDataResult<User>(userToCheck.Data, Messages.SuccessLogin);
+            return new SuccessDataResult<User>(userToCheck, Messages.SuccessLogin);
         }
 
         public IDataResult<User> Register(UserForRegisterDto userForRegister)
@@ -58,6 +58,7 @@ namespace Business.Concrete
                 Name = userForRegister.Name,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                CreationDate = DateTime.Now,
                 Status = true
             };
             _userService.Add(user);

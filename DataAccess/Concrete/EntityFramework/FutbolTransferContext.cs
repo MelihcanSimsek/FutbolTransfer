@@ -21,5 +21,8 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Follower> Relationships { get; set; }
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
+        public DbSet<BackgroundImage> BackgroundImages { get; set; }
+        public DbSet<ProfileImage> ProfileImages { get; set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Business.Concrete
             {
                 return new ErrorDataResult<User>(Messages.UserNotFound);
             }
-            return new SuccessDataResult<User>(Messages.UserListed);
+            return new SuccessDataResult<User>(result,Messages.UserListed);
         }
 
         public IDataResult<User> GetByUserId(int id)

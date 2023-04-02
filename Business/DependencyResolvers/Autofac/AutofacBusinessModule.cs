@@ -20,10 +20,16 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<FollowerManager>().As<IFollowerService>();
             builder.RegisterType<AuthManager>().As<IAuthService>();
+            builder.RegisterType<ProfileManager>().As<IProfileService>();
+            builder.RegisterType<ProfileImageManager>().As<IProfileImageService>();
+            builder.RegisterType<BackgroundImageManager>().As<IBackgroundImageService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
             builder.RegisterType<EfPostDal>().As<IPostDal>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
             builder.RegisterType<EfFollowerDal>().As<IFollowerDal>();
+            builder.RegisterType<EfProfileDal>().As<IProfileDal>();
+            builder.RegisterType<EfProfileImageDal>().As<IProfileImageDal>();
+            builder.RegisterType<EfBackgroundImageDal>().As<IBackgroundImageDal>();
 
         }
 
