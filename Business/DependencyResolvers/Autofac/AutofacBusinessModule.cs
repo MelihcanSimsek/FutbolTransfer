@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Business.Abstract;
 using Business.Concrete;
+using Core.Entities.Concrete;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
@@ -21,15 +22,16 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<FollowerManager>().As<IFollowerService>();
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<ProfileManager>().As<IProfileService>();
-            builder.RegisterType<ProfileImageManager>().As<IProfileImageService>();
-            builder.RegisterType<BackgroundImageManager>().As<IBackgroundImageService>();
+            builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>();
+            builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
             builder.RegisterType<EfPostDal>().As<IPostDal>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
             builder.RegisterType<EfFollowerDal>().As<IFollowerDal>();
             builder.RegisterType<EfProfileDal>().As<IProfileDal>();
-            builder.RegisterType<EfProfileImageDal>().As<IProfileImageDal>();
-            builder.RegisterType<EfBackgroundImageDal>().As<IBackgroundImageDal>();
+            builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
+            builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
+          
 
         }
 

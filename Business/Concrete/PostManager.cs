@@ -22,6 +22,7 @@ namespace Business.Concrete
         public IResult Add(Post post)
         {
             _postDal.Add(post);
+            CheckIfPostIsComment(post);
             return new SuccessResult(Messages.PostAdded);
         }
 
@@ -29,6 +30,13 @@ namespace Business.Concrete
         {
             _postDal.Delete(post);
             return new SuccessResult(Messages.PostDeleted);
+        }
+
+        public IResult UpdateFavNumberByPostId(int id)
+        {
+            var post = _postDal.Get(p => p.Id == id);
+            post.Fav = post.Fav + 1;
+            return new SuccessResult(Messages.PostLiked);
         }
 
         public IDataResult<List<Post>> GetAll()
@@ -53,13 +61,23 @@ namespace Business.Concrete
 
         public IDataResult<List<Post>> GetMainPost()
         {
-            return new SuccessDataResult<List<Post>>(_postDal.GetAll(p => p.ParentId == null),Messages.MainPostListed);
+            return new SuccessDataResult<List<Post>>(_postDal.GetAll(p => p.ParentId == 0),Messages.MainPostListed);
         }
 
         public IResult Update(Post post)
         {
             _postDal.Update(post);
             return new SuccessResult(Messages.PostUpdated);
+        }
+
+        private void CheckIfPostIsComment(Post post)
+        {
+            if(post.ParentId != 0)
+            {
+                var parentPost = _postDal.Get(p => p.Id == post.ParentId);
+                parentPost.Comment = parentPost.Comment + 1;
+                _postDal.Update(parentPost);
+            }
         }
     }
 }

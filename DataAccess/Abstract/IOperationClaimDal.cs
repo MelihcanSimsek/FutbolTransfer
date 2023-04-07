@@ -1,7 +1,5 @@
 ﻿using Core.DataAccess;
-using Core.DataAccess.EntityFramework;
-using DataAccess.Concrete.EntityFramework;
-using Entities.Concrete;
+using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Abstract
 {
-    public interface IBackgroundImageDal:IEntityRepository<BackgroundImage>
+    public interface IOperationClaimDal:IEntityRepository<OperationClaim>
     {
     }
 }

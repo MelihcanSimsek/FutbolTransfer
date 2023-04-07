@@ -10,10 +10,10 @@ namespace Business.Constants
 {
     public static class Messages
     {
-        public static string PostAdded = "Post eklendi";
-        public static string PostDeleted = "Post silindi";
-        public static string PostUpdated = "Post güncellendi";
-        public static string PostListed = "Postlar listelendi";
+        public static string PostAdded = "Gönderi eklendi";
+        public static string PostDeleted = "Gönderi silindi";
+        public static string PostUpdated = "Gönderi güncellendi";
+        public static string PostListed = "Gönderiler listelendi";
         public static string FollowerAdded = "Takipçi eklendi";
         public static string FollowerDeleted = "Takipçi silindi";
         public static string FollowerListed = "Takipçi listelendi";
@@ -31,5 +31,8 @@ namespace Business.Constants
         public static string UserAlreadyHave = "Kullanıcı halihazırda mevcut";
         public static string UserAlreadyExists = "Kullanıcı var";
         public static string UserRegistered = "Kullanıcı kaydedildi";
+        public static string BackgroundImageUpdated = "Arkaplan resmi güncellendi";
+        public static string ProfileImageUpdated = "Profil resmi güncellendi";
+        public static string PostLiked = "Gönderi beğenildi";
     }
 }

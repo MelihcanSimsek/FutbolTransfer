@@ -16,9 +16,9 @@ namespace Business.Abstract
         IDataResult<List<Post>> GetAll();
         IDataResult<List<Post>> GetByUserId(int userId);
         IDataResult<Post> GetById(int id);
-
         IDataResult<List<Post>> GetMainPost();
         IDataResult<List<Post>> GetCommentsByPostId(int id);
+        IResult UpdateFavNumberByPostId(int id);
 
     }
 }

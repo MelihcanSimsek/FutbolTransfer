@@ -14,5 +14,7 @@ namespace Entities.Concrete
         public int ParentId { get; set; }
         public string? Content { get; set; }
         public DateTime CreationDate { get; set; }
+        public int Fav { get; set; }
+        public int Comment { get; set; }
     }
 }

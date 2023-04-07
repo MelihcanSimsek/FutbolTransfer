@@ -1,5 +1,6 @@
 ﻿using Core.Utilities.Results;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace Business.Abstract
         IResult Update(Profile profile);
         IDataResult<List<Profile>> GetAll();
         IDataResult<Profile> GetByUserId(int id);
+        IResult ProfileImageUpdate(IFormFile formFile, Profile profile);
+        IResult BackgroundImageUpdate(IFormFile formFile, Profile profile);
     }
 }

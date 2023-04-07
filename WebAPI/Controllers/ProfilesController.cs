@@ -7,29 +7,31 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase
+    public class ProfilesController : ControllerBase
     {
-        IPostService _postService;
-        public PostsController(IPostService postService)
+        IProfileService _profileService;
+
+        public ProfilesController(IProfileService profileService)
         {
-            _postService = postService;
+            _profileService = profileService;
         }
 
         [HttpPost("add")]
-        public IActionResult Add(Post post)
+        public IActionResult Add(Profile profile)
         {
-            var result = _postService.Add(post);
+            var result = _profileService.Add(profile);
             if(result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
+
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(Post post)
+        public IActionResult Delete(Profile profile)
         {
-            var result = _postService.Delete(post);
+            var result = _profileService.Delete(profile);
             if(result.Success)
             {
                 return Ok(result);
@@ -38,31 +40,21 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(Post post)
+        public IActionResult Update(Profile profile)
         {
-            var result = _postService.Update(post);
+            var result = _profileService.Update(profile);
             if(result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
 
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _postService.GetAll();
-            if(result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
-        {
-            var result = _postService.GetById(id);
+            var result = _profileService.GetAll();
             if(result.Success)
             {
                 return Ok(result);
@@ -73,7 +65,7 @@ namespace WebAPI.Controllers
         [HttpGet("getbyuserid")]
         public IActionResult GetByUserId(int id)
         {
-            var result = _postService.GetByUserId(id);
+            var result = _profileService.GetByUserId(id);
             if(result.Success)
             {
                 return Ok(result);
@@ -81,10 +73,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getmainpost")]
-        public IActionResult GetMainPost()
+        [HttpPost("backgroundimageupdate")]
+        public IActionResult BackgroundImageUpdate([FromForm(Name = ("Image"))] IFormFile file, [FromForm] Profile profile)
         {
-            var result = _postService.GetMainPost();
+            var result = _profileService.BackgroundImageUpdate(file, profile);
             if(result.Success)
             {
                 return Ok(result);
@@ -92,10 +84,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcommentsbypostid")]
-        public IActionResult GetCommentByPostId(int id)
+        [HttpPost("profileimageupdate")]
+        public IActionResult ProfileImageUpdate([FromForm(Name = ("Image"))] IFormFile file, [FromForm] Profile profile)
         {
-            var result = _postService.GetCommentsByPostId(id);
+            var result = _profileService.ProfileImageUpdate(file, profile);
             if(result.Success)
             {
                 return Ok(result);
@@ -103,15 +95,5 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("updatefavnumberbypostid")]
-        public IActionResult UpdateFavNumberByPostId(int id)
-        {
-            var result = _postService.UpdateFavNumberByPostId(id);
-            if(result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
     }
 }
