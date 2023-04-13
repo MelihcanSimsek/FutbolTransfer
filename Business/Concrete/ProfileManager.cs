@@ -49,7 +49,7 @@ namespace Business.Concrete
 
         public IDataResult<Profile> GetByUserId(int id)
         {
-            var profileModel = _profileDal.Get(p => p.Id == id);
+            var profileModel = _profileDal.Get(p => p.UserId == id);
             profileModel.BackgroundImage = GetDefaultBackgroundImage(profileModel);
             profileModel.ProfileImage = GetDefaultProfileImage(profileModel);
             return new SuccessDataResult<Profile>(profileModel);

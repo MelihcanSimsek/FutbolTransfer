@@ -34,5 +34,14 @@ namespace Business.Constants
         public static string BackgroundImageUpdated = "Arkaplan resmi güncellendi";
         public static string ProfileImageUpdated = "Profil resmi güncellendi";
         public static string PostLiked = "Gönderi beğenildi";
+        public static string PlayerAdded = "Oyuncu eklendi";
+        public static string PlayerDeleted = "Oyuncu silindi";
+        public static string PlayerUpdated = "Oyuncu güncellendi";
+        public static string ClubAdded = "Kulüp eklendi";
+        public static string ClubDeleted = "Kulüp silindi";
+        public static string ClubUpdated = "Kulüp güncellendi";
+        public static string TransferNewsAdded = "Transfer haberi eklendi";
+        public static string TransferNewsDeleted = "Transfer haberi silindi";
+        public static string TransferNewsUpdated = "Transfer haberi güncellendi";
     }
 }

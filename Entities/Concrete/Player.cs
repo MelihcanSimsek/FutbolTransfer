@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace Entities.Concrete
 {
-    public class Profile:IEntity
+    public class Player:IEntity
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
-        public string? Description { get; set; }
-        public string? Location { get; set; }
-        public string? WebSite { get; set; }
+        public string? Name { get; set; }
+        public string? Position { get; set; }
+        public int Age { get; set; }
+        public string? Nationality { get; set; }
+        public string? Club { get; set; }
         public string? ProfileImage { get; set; }
-        public string? BackgroundImage { get; set; }
-
     }
 }

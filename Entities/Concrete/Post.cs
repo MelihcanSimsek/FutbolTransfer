@@ -16,5 +16,7 @@ namespace Entities.Concrete
         public DateTime CreationDate { get; set; }
         public int Fav { get; set; }
         public int Comment { get; set; }
+        public int Verify { get; set; }
+        public bool Status { get; set; }
     }
 }

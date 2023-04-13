@@ -3,7 +3,7 @@ using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +15,22 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         IUserDal _userDal;
-
-        public UserManager(IUserDal userDal)
+        IProfileService _profileService;
+        public UserManager(IUserDal userDal,IProfileService profileService)
         {
             _userDal = userDal;
+            _profileService = profileService;
         }
 
         public IResult Add(User user)
         {
             _userDal.Add(user);
+            var result = GetByEmail(user.Email).Data;
+            var profile = new Profile
+            {
+                UserId = result.Id
+            };
+            _profileService.Add(profile);
             return new SuccessResult(Messages.UserAdded);
         }
 

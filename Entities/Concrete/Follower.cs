@@ -10,6 +10,7 @@ namespace Entities.Concrete
 {
     public class Follower:IEntity
     {
+        public int Id { get; set; }
         public int FollowerId { get; set; }
         public int FollowedId { get; set; }
         public DateTime CreationDate { get; set; }

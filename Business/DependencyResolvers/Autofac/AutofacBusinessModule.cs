@@ -24,14 +24,23 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<ProfileManager>().As<IProfileService>();
             builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>();
             builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>();
+            builder.RegisterType<PlayerManager>().As<IPlayerService>();
+            builder.RegisterType<ClubManager>().As<IClubService>();
+            builder.RegisterType<TransferManager>().As<ITransferService>();
+            builder.RegisterType<VerifiedRequestManager>().As<IVerifiedRequestService>();
+
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
+
             builder.RegisterType<EfPostDal>().As<IPostDal>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
             builder.RegisterType<EfFollowerDal>().As<IFollowerDal>();
             builder.RegisterType<EfProfileDal>().As<IProfileDal>();
             builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
             builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
-          
+            builder.RegisterType<EfPlayerDal>().As<IPlayerDal>();
+            builder.RegisterType<EfClubDal>().As<IClubDal>();
+            builder.RegisterType<EfTransferDal>().As<ITransferDal>();
+            builder.RegisterType<EfVerifiedRequestDal>().As<IVerifiedRequestDal>();
 
         }
 

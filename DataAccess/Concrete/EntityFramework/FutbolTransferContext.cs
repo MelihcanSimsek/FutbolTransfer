@@ -22,6 +22,10 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
         public DbSet<Profile> Profiles { get; set; }
-        
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Club> Clubs { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<VerifiedRequest> VerifiedRequests { get; set; }
+
     }
 }
