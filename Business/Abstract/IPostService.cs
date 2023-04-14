@@ -1,5 +1,6 @@
 ﻿using Core.Utilities.Results;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,12 @@ namespace Business.Abstract
         IDataResult<Post> GetById(int id);
         IDataResult<List<Post>> GetMainPost();
         IDataResult<List<Post>> GetCommentsByPostId(int id);
-        IResult UpdateFavNumberByPostId(int id);
+        IResult IncreaseFavNumberByPostId(int id);
+        IResult DecreaseFavNumberByPostId(int id);
+        IResult IncreaseVerifyNumberByPostId(int id);
+        IResult DecreaseVerifyNumberByPostId(int id);
+        IDataResult<List<TransferPostDto>> GetTransferPosts();
+        IDataResult<List<TransferPostDto>> GetTransferPostsByUserId(int id);
 
     }
 }

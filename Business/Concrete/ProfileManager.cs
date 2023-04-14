@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Utilities.Business;
 using Core.Utilities.Helpers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -32,7 +33,7 @@ namespace Business.Concrete
         public IResult BackgroundImageUpdate(IFormFile formFile, Profile profile)
         {
             var profileModel = BackgroundImageCheck(formFile, profile).Data;
-            _profileDal.Update(profileModel);
+            Update(profileModel);
             return new SuccessResult(Messages.BackgroundImageUpdated);
         }
 
@@ -50,8 +51,17 @@ namespace Business.Concrete
         public IDataResult<Profile> GetByUserId(int id)
         {
             var profileModel = _profileDal.Get(p => p.UserId == id);
-            profileModel.BackgroundImage = GetDefaultBackgroundImage(profileModel);
-            profileModel.ProfileImage = GetDefaultProfileImage(profileModel);
+            var result = BusinessRules.Run(GetDefaultBackgroundImage(profileModel));
+            if(result  != null)
+            {
+                profileModel.BackgroundImage = "DefaultBackgroundImage.jpg";
+            }
+            result = BusinessRules.Run(GetDefaultProfileImage(profileModel));
+            if(result != null)
+            {
+                profileModel.ProfileImage = "DefaultProfileImage.jpg";
+            }
+            
             return new SuccessDataResult<Profile>(profileModel);
            
         }
@@ -59,7 +69,7 @@ namespace Business.Concrete
         public IResult ProfileImageUpdate(IFormFile formFile, Profile profile)
         {
             var profileModel = ProfileImageCheck(formFile, profile).Data;
-            _profileDal.Update(profileModel);
+            Update(profileModel);
             return new SuccessResult(Messages.ProfileImageUpdated);
         }
 
@@ -71,7 +81,7 @@ namespace Business.Concrete
 
         private IDataResult<Profile> BackgroundImageCheck(IFormFile file,Profile profile)
         {
-            var profileToCheck = _profileDal.Get(p => p.Id == profile.Id);
+            var profileToCheck = _profileDal.Get(p => p.UserId == profile.UserId);
             if (profileToCheck.BackgroundImage != null)
             {
                 profile.BackgroundImage = FileHelper.Update(profileToCheck.BackgroundImage, file);
@@ -85,7 +95,7 @@ namespace Business.Concrete
 
         private IDataResult<Profile> ProfileImageCheck(IFormFile file,Profile profile)
         {
-            var profileToCheck = _profileDal.Get(p => p.Id == profile.Id);
+            var profileToCheck = _profileDal.Get(p => p.UserId == profile.UserId);
             if(profileToCheck.ProfileImage != null)
             {
                 profile.ProfileImage = FileHelper.Update(profileToCheck.ProfileImage, file);
@@ -97,27 +107,23 @@ namespace Business.Concrete
             return new SuccessDataResult<Profile>(profile);
         }
 
-        private string GetDefaultBackgroundImage(Profile profile)
+        private IResult GetDefaultBackgroundImage(Profile profile)
         {
-            if(profile.BackgroundImage == null)
+            if(profile.BackgroundImage.Length>0)
             {
-                return "DefaultBackgroundImage.jpg";
-            }else
-            {
-                return profile.BackgroundImage;
+                return new SuccessResult();
             }
+            return new ErrorResult();
+            
 
         }
-        private string GetDefaultProfileImage(Profile profile)
+        private IResult GetDefaultProfileImage(Profile profile)
         {
-            if (profile.ProfileImage == null)
+            if (profile.ProfileImage.Length  >0)
             {
-                return "DefaultProfileImage.jpg";
+                return new SuccessResult();
             }
-            else
-            {
-                return profile.ProfileImage;
-            }
+            return new ErrorResult();
         }
     }
 }

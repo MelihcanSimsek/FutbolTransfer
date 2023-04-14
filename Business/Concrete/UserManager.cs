@@ -15,22 +15,16 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         IUserDal _userDal;
-        IProfileService _profileService;
-        public UserManager(IUserDal userDal,IProfileService profileService)
+        
+        public UserManager(IUserDal userDal)
         {
             _userDal = userDal;
-            _profileService = profileService;
+            
         }
 
         public IResult Add(User user)
         {
             _userDal.Add(user);
-            var result = GetByEmail(user.Email).Data;
-            var profile = new Profile
-            {
-                UserId = result.Id
-            };
-            _profileService.Add(profile);
             return new SuccessResult(Messages.UserAdded);
         }
 

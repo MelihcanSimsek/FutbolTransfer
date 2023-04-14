@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,10 +33,11 @@ namespace Business.Concrete
             return new SuccessResult(Messages.PostDeleted);
         }
 
-        public IResult UpdateFavNumberByPostId(int id)
+        public IResult IncreaseFavNumberByPostId(int id)
         {
             var post = _postDal.Get(p => p.Id == id);
             post.Fav = post.Fav + 1;
+            Update(post);
             return new SuccessResult(Messages.PostLiked);
         }
 
@@ -78,6 +80,52 @@ namespace Business.Concrete
                 parentPost.Comment = parentPost.Comment + 1;
                 _postDal.Update(parentPost);
             }
+        }
+
+        public IResult DecreaseFavNumberByPostId(int id)
+        {
+            var post = _postDal.Get(p => p.Id == id);
+            if(post.Fav <= 0 )
+            {
+
+                return new ErrorResult();
+            }
+            post.Fav = post.Fav - 1;
+            Update(post);
+            return new SuccessResult(Messages.PostUnliked);
+        }
+
+        public IResult IncreaseVerifyNumberByPostId(int id)
+        {
+            var post = _postDal.Get(p => p.Id == id);
+            post.Verify = post.Verify + 1;
+            Update(post);
+            return new SuccessResult(Messages.PostVerified);
+        }
+
+        public IResult DecreaseVerifyNumberByPostId(int id)
+        {
+            var post = _postDal.Get(p => p.Id == id);
+            if(post.Verify <= 0)
+            {
+                return new ErrorResult();
+            }
+            post.Verify = post.Verify - 1;
+            Update(post);
+            return new SuccessResult(Messages.PostUnverified);
+
+        }
+
+        public IDataResult<List<TransferPostDto>> GetTransferPosts()
+        {
+            var result = _postDal.GetTransferPosts();
+            return new SuccessDataResult<List<TransferPostDto>>(result);
+        }
+
+        public IDataResult<List<TransferPostDto>> GetTransferPostsByUserId(int id)
+        {
+            var result = _postDal.GetTransferPosts(tp => tp.UserId == id);
+            return new SuccessDataResult<List<TransferPostDto>>(result);
         }
     }
 }

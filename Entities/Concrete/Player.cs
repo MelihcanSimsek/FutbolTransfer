@@ -10,11 +10,11 @@ namespace Entities.Concrete
     public class Player:IEntity
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Position { get; set; }
+        public string Name { get; set; }
+        public string Position { get; set; }
         public int Age { get; set; }
-        public string? Nationality { get; set; }
-        public string? Club { get; set; }
-        public string? ProfileImage { get; set; }
+        public string Nationality { get; set; }
+        public string Club { get; set; }
+        public string ProfileImage { get; set; }
     }
 }

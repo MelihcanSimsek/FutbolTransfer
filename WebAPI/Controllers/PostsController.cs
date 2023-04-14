@@ -103,10 +103,67 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("updatefavnumberbypostid")]
-        public IActionResult UpdateFavNumberByPostId(int id)
+        [HttpGet("increasefavnumberbypostid")]
+        public IActionResult IncreaseFavNumberByPostId(int id)
         {
-            var result = _postService.UpdateFavNumberByPostId(id);
+            var result = _postService.IncreaseFavNumberByPostId(id);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("decreasefavnumberbypostid")]
+        public IActionResult DecreaseFavNumberByPostId(int id)
+        {
+            var result = _postService.DecreaseFavNumberByPostId(id);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("increaseverifynumberbypostid")]
+        public IActionResult IncreaseVerifyNumberByPostId(int id)
+        {
+            var result = _postService.IncreaseVerifyNumberByPostId(id);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpGet("decreaseverifynumberbypostid")]
+        public IActionResult DecreaseVerifyNumberByPostId(int id)
+        {
+            var result = _postService.DecreaseVerifyNumberByPostId(id);
+            if(result.Success)
+            {
+                return Ok(result);
+
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("gettransferposts")]
+        public IActionResult GetTransferPosts()
+        {
+            var result = _postService.GetTransferPosts();
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("gettransferpostsbyuserid")]
+        public IActionResult GetTransferPostsByUserId(int id)
+        {
+            var result = _postService.GetTransferPostsByUserId(id);
             if(result.Success)
             {
                 return Ok(result);

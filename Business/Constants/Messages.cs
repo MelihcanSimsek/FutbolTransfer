@@ -33,7 +33,6 @@ namespace Business.Constants
         public static string UserRegistered = "Kullanıcı kaydedildi";
         public static string BackgroundImageUpdated = "Arkaplan resmi güncellendi";
         public static string ProfileImageUpdated = "Profil resmi güncellendi";
-        public static string PostLiked = "Gönderi beğenildi";
         public static string PlayerAdded = "Oyuncu eklendi";
         public static string PlayerDeleted = "Oyuncu silindi";
         public static string PlayerUpdated = "Oyuncu güncellendi";
@@ -43,5 +42,9 @@ namespace Business.Constants
         public static string TransferNewsAdded = "Transfer haberi eklendi";
         public static string TransferNewsDeleted = "Transfer haberi silindi";
         public static string TransferNewsUpdated = "Transfer haberi güncellendi";
+        public static string PostLiked = "Gönderi beğenildi";
+        public static string PostUnliked = "Gönderi beğeni geri çekildi";
+        public static string PostUnverified = "Gönderi onay geri çekildi";
+        public static string PostVerified = "Gönderi onaylandı";
     }
 }
