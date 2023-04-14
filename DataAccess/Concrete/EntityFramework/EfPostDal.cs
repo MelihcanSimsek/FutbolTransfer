@@ -13,7 +13,7 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfPostDal : EfEntityFrameworkBase<Post, FutbolTransferContext>, IPostDal
     {
-        public List<PostDetailDto> GetPostDetails(Expression<Func<PostDetailDto, bool>>? filter = null)
+        public List<PostDetailDto> GetPostDetails(Expression<Func<PostDetailDto, bool>> filter = null)
         {
             using (var context = new FutbolTransferContext())
             {
@@ -36,13 +36,14 @@ namespace DataAccess.Concrete.EntityFramework
                                  ProfileImage = profile.ProfileImage,
                                  Roles = context.OperationClaims.Where(oc => oc.Id == useroperationclaim.OperationClaimId).Select(oc => oc.Name).ToArray(),
                                  Status=post.Status,
-                                 UserName=user.Name
+                                 UserName=user.Name,
+                                 Verify = post.Verify
                              };
                 return filter == null ? result.ToList() : result.Where(filter).ToList();
             }
         }
 
-        public List<TransferPostDto> GetTransferPosts(Expression<Func<TransferPostDto, bool>>? filter = null)
+        public List<TransferPostDto> GetTransferPosts(Expression<Func<TransferPostDto, bool>> filter = null)
         {
             using (var context = new FutbolTransferContext())
             {

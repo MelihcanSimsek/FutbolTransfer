@@ -82,9 +82,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getmainpost")]
-        public IActionResult GetMainPost()
+        public IActionResult GetMainPost(int id)
         {
-            var result = _postService.GetMainPost();
+            var result = _postService.GetMainPostWithAlgorithm(id);
             if(result.Success)
             {
                 return Ok(result);
@@ -93,9 +93,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getcommentsbypostid")]
-        public IActionResult GetCommentByPostId(int id)
+        public IActionResult GetCommentByPostId(int postId,int userId)
         {
-            var result = _postService.GetCommentsByPostId(id);
+            var result = _postService.GetCommentsByPostId(postId,userId);
             if(result.Success)
             {
                 return Ok(result);

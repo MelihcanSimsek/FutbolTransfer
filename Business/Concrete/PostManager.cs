@@ -15,9 +15,11 @@ namespace Business.Concrete
     public class PostManager : IPostService
     {
         IPostDal _postDal;
-        public PostManager(IPostDal postDal)
+        IFollowerService _followerService;
+        public PostManager(IPostDal postDal,IFollowerService followerService)
         {
             _postDal = postDal;
+            _followerService = followerService;
         }
 
         public IResult Add(Post post)
@@ -46,24 +48,38 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Post>>(_postDal.GetAll(),Messages.PostListed);
         }
 
-        public IDataResult<Post> GetById(int id)
+        public IDataResult<PostDetailDto> GetById(int postId)
         {
-            return new SuccessDataResult<Post>(_postDal.Get(p => p.Id == id));
+            var post = _postDal.GetPostDetails(p => p.PostId == postId).SingleOrDefault();
+            return new SuccessDataResult<PostDetailDto>(post);
         }
 
-        public IDataResult<List<Post>> GetByUserId(int userId)
+        public IDataResult<List<PostDetailDto>> GetByUserId(int userId)
         {
-            return new SuccessDataResult<List<Post>>(_postDal.GetAll(p => p.UserId == userId));
+            var allPosts = _postDal.GetPostDetails(p => p.ParentId == 0 && p.UserId == userId).OrderByDescending(p => p.CreationDate).ToList();
+            return new SuccessDataResult<List<PostDetailDto>>(allPosts);
         }
 
-        public IDataResult<List<Post>> GetCommentsByPostId(int id)
+        public IDataResult<List<PostDetailDto>> GetCommentsByPostId(int postId,int userId)
         {
-            return new SuccessDataResult<List<Post>>(_postDal.GetAll(p => p.ParentId == id),Messages.CommentListed);
+            var followedUserIds = _followerService.GetByFollowerId(userId).Data;
+            var allPosts = _postDal.GetPostDetails(p => p.ParentId == postId);
+            var sortedPosts = GetBestOfPosts(allPosts);
+            var nonFollowedPosts = sortedPosts.Where(p => !followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).ToList();
+            var followedPosts = sortedPosts.Where(p => followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).ToList();
+            var concatenatedPosts = followedPosts.Concat(nonFollowedPosts).ToList();
+            return new SuccessDataResult<List<PostDetailDto>>(concatenatedPosts);
         }
 
-        public IDataResult<List<Post>> GetMainPost()
+        public IDataResult<List<PostDetailDto>> GetMainPostWithAlgorithm(int userId)
         {
-            return new SuccessDataResult<List<Post>>(_postDal.GetAll(p => p.ParentId == 0),Messages.MainPostListed);
+            var followedUserIds = _followerService.GetByFollowerId(userId).Data;
+            var allPosts = _postDal.GetPostDetails(p=>p.ParentId == 0 && p.CreationDate >= DateTime.Now.AddDays(-1));
+            var sortedPosts = GetBestOfPosts(allPosts);
+            var nonFollowedPosts = sortedPosts.Where(p => !followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).Take(40);
+            var followedPosts = sortedPosts.Where(p => followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).Take(25);
+            var unionPosts = nonFollowedPosts.Union(followedPosts).OrderByDescending(p => p.CreationDate).Take(30).ToList();
+            return new SuccessDataResult<List<PostDetailDto>>(unionPosts, Messages.PostListed);
         }
 
         public IResult Update(Post post)
@@ -127,5 +143,17 @@ namespace Business.Concrete
             var result = _postDal.GetTransferPosts(tp => tp.UserId == id);
             return new SuccessDataResult<List<TransferPostDto>>(result);
         }
+
+        private List<PostDetailDto> GetBestOfPosts(List<PostDetailDto> allPosts)
+        {
+            var bestOfPosts = allPosts.Select(p => new
+            {
+                Post = p,
+                Score = p.Fav + p.Verify * 2 + p.Comment * 3
+            }).ToList();
+            var sortedPosts = bestOfPosts.OrderByDescending(p => p.Score).Select(p => p.Post).ToList();
+            return sortedPosts;
+        }
+        
     }
 }

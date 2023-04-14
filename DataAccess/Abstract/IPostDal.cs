@@ -13,8 +13,8 @@ namespace DataAccess.Abstract
 {
     public interface IPostDal:IEntityRepository<Post>
     {
-        List<TransferPostDto> GetTransferPosts(Expression<Func<TransferPostDto, bool>>? filter = null);
-        List<PostDetailDto> GetPostDetails(Expression<Func<PostDetailDto, bool>>? filter = null);
+        List<TransferPostDto> GetTransferPosts(Expression<Func<TransferPostDto, bool>> filter = null);
+        List<PostDetailDto> GetPostDetails(Expression<Func<PostDetailDto, bool>> filter = null);
         
     }
 }

@@ -30,9 +30,10 @@ namespace Business.Concrete
             return new SuccessResult(Messages.FollowerDeleted);
         }
 
-        public IDataResult<List<Follower>> GetByFollowerId(int followerId)
+        public IDataResult<List<int>> GetByFollowerId(int followerId)
         {
-            return new SuccessDataResult<List<Follower>>(_followerDal.GetAll(f => f.FollowerId == followerId),Messages.FollowerListed);
+            var result = _followerDal.GetAll(f => f.FollowerId == followerId).Select(f => f.FollowedId).ToList();
+            return new SuccessDataResult<List<int>>(result,Messages.FollowerListed);
         }
 
         public IResult Update(Follower follower)

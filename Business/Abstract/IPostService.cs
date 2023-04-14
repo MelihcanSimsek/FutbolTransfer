@@ -15,10 +15,10 @@ namespace Business.Abstract
         IResult Delete(Post post);
         IResult Update(Post post);
         IDataResult<List<Post>> GetAll();
-        IDataResult<List<Post>> GetByUserId(int userId);
-        IDataResult<Post> GetById(int id);
-        IDataResult<List<Post>> GetMainPost();
-        IDataResult<List<Post>> GetCommentsByPostId(int id);
+        IDataResult<List<PostDetailDto>> GetByUserId(int userId);
+        IDataResult<PostDetailDto> GetById(int postId);
+        IDataResult<List<PostDetailDto>> GetMainPostWithAlgorithm(int userId);
+        IDataResult<List<PostDetailDto>> GetCommentsByPostId(int postId,int userId);
         IResult IncreaseFavNumberByPostId(int id);
         IResult DecreaseFavNumberByPostId(int id);
         IResult IncreaseVerifyNumberByPostId(int id);
