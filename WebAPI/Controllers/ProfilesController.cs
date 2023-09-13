@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("backgroundimageupdate")]
-        public IActionResult BackgroundImageUpdate([FromForm(Name = ("Image"))] IFormFile file, [FromForm] Profile profile)
+        public IActionResult BackgroundImageUpdate([FromForm(Name = ("image"))] IFormFile file, [FromForm] Profile profile)
         {
             var result = _profileService.BackgroundImageUpdate(file, profile);
             if(result.Success)
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("profileimageupdate")]
-        public IActionResult ProfileImageUpdate([FromForm(Name = ("Image"))] IFormFile file, [FromForm] Profile profile)
+        public IActionResult ProfileImageUpdate([FromForm(Name = ("image"))] IFormFile file, [FromForm] Profile profile)
         {
             var result = _profileService.ProfileImageUpdate(file, profile);
             if(result.Success)

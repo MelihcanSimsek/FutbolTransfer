@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("getall")]
+        [HttpGet("getall")]
         public IActionResult GetAll()
         {
             var result = _request.GetAll();
@@ -60,11 +60,22 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("getbyrequestid")]
-        public IActionResult GetByRequestId(int id)
+        [HttpGet("getrequestbyid")]
+        public IActionResult GetRequestById(int id)
         {
             var result = _request.GetByRequestId(id);
             if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getrequestbyuserid")]
+        public IActionResult GetRequestByUserId(int id)
+        {
+            var result = _request.GetRequestByUserId(id);
+            if(result.Success)
             {
                 return Ok(result);
             }

@@ -17,8 +17,8 @@ namespace Entities.DTOs
         public string Content { get; set; }
         public DateTime CreationDate { get; set; }
         public int Comment { get; set; }
-        public int Fav { get; set; }
-        public int Verify { get; set; }
+        public int[] Fav { get; set; }
+        public int[] Verify { get; set; }
         public bool Status { get; set; }
         public string PlayerName { get; set; }
         public string PlayerPosition { get; set; }
@@ -26,11 +26,13 @@ namespace Entities.DTOs
         public string PlayerNationality { get; set; }
         public string PlayerImage { get; set; }
         public string PlayerClub { get; set; }
+        public string PlayerClubImage { get; set; }
         public string ClubName { get; set; }
         public string ClubImage { get; set; }
         public string UserProfileImage { get; set; }
         public string UserName { get; set; }
         public string[] Roles { get; set; }
+        public int TransferRate { get; set; }
 
     }
 }

@@ -28,6 +28,9 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<ClubManager>().As<IClubService>();
             builder.RegisterType<TransferManager>().As<ITransferService>();
             builder.RegisterType<VerifiedRequestManager>().As<IVerifiedRequestService>();
+            builder.RegisterType<FavManager>().As<IFavService>();
+            builder.RegisterType<VerifyManager>().As<IVerifyService>();
+           
 
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
 
@@ -41,6 +44,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfClubDal>().As<IClubDal>();
             builder.RegisterType<EfTransferDal>().As<ITransferDal>();
             builder.RegisterType<EfVerifiedRequestDal>().As<IVerifiedRequestDal>();
+            builder.RegisterType<EfFavDal>().As<IFavDal>();
+            builder.RegisterType<EfVerifyDal>().As<IVerifyDal>();
 
         }
 

@@ -51,9 +51,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string letter)
         {
-            var result = _clubService.GetAll();
+            var result = _clubService.GetAll(letter);
             if(result.Success)
             {
                 return Ok(result);

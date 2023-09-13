@@ -48,15 +48,28 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbyfollowerid")]
-        public IActionResult GetByFollowerId(int id)
+        [HttpGet("getfollowerslist")]
+        public IActionResult GetFollowersList(int id)
         {
-            var result = _followerService.GetByFollowerId(id);
+            var result = _followerService.GetFollowersList(id);
             if(result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
+        [HttpGet("getfollowedlist")]
+        public IActionResult GetFollowedList(int id)
+        {
+            var result = _followerService.GetFollowedList(id);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
     }
 }

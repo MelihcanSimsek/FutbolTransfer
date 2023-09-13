@@ -13,7 +13,7 @@ namespace Business.Abstract
         IResult Add(Player player);
         IResult Delete(Player player);
         IResult Update(Player player);
-        IDataResult<List<Player>> GetAll();
+        IDataResult<List<Player>> GetAll(string firstLetter);
         IDataResult<Player> GetPlayerById(int id);
     }
 }

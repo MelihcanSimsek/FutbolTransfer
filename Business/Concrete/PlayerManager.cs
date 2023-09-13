@@ -32,9 +32,10 @@ namespace Business.Concrete
             return new SuccessResult(Messages.PlayerDeleted);
         }
 
-        public IDataResult<List<Player>> GetAll()
+        public IDataResult<List<Player>> GetAll(string firstLetter)
         {
-            return new SuccessDataResult<List<Player>>(_playerDal.GetAll());
+            var result = _playerDal.GetAll(p => p.Name.StartsWith(firstLetter)).OrderBy(p => p.Name).ToList();
+            return new SuccessDataResult<List<Player>>(result);
         }
 
         public IDataResult<Player> GetPlayerById(int id)

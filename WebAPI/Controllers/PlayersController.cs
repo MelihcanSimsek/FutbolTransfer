@@ -50,9 +50,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getall")]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string letter)
         {
-            var result = _playerService.GetAll();
+            var result = _playerService.GetAll(letter);
             if(result.Success)
             {
                 return Ok(result);

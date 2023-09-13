@@ -20,19 +20,27 @@ namespace Business.Concrete
         }
         public IResult Add(Follower follower)
         {
+            follower.CreationDate = DateTime.Now;
             _followerDal.Add(follower);
             return new SuccessResult(Messages.FollowerAdded);
         }
 
         public IResult Delete(Follower follower)
         {
-            _followerDal.Delete(follower);
+            var result = _followerDal.Get(f => f.FollowerId == follower.FollowerId && f.FollowedId == follower.FollowedId);
+            _followerDal.Delete(result);
             return new SuccessResult(Messages.FollowerDeleted);
         }
 
-        public IDataResult<List<int>> GetByFollowerId(int followerId)
+        public IDataResult<List<int>> GetFollowedList(int id)
         {
-            var result = _followerDal.GetAll(f => f.FollowerId == followerId).Select(f => f.FollowedId).ToList();
+            var result = _followerDal.GetAll(f => f.FollowerId == id).Select(f => f.FollowedId).ToList();
+            return new SuccessDataResult<List<int>>(result, Messages.FollowerListed);
+        }
+
+        public IDataResult<List<int>> GetFollowersList(int id)
+        {
+            var result = _followerDal.GetAll(f => f.FollowedId == id).Select(f => f.FollowerId).ToList();
             return new SuccessDataResult<List<int>>(result,Messages.FollowerListed);
         }
 

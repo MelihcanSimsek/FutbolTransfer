@@ -15,8 +15,8 @@ namespace Entities.DTOs
         public string Content { get; set; }
         public DateTime CreationDate { get; set; }
         public int Comment { get; set; }
-        public int Fav { get; set; }
-        public int Verify { get; set; }
+        public int[] Fav { get; set; }
+        public int[] Verify { get; set; }
         public bool  Status { get; set; }
         public string[] Roles { get; set; }
         public string UserName { get; set; }

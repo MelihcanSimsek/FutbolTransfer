@@ -1,5 +1,6 @@
 ﻿using Core.Utilities.Results;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,8 @@ namespace Business.Abstract
         IResult Add(VerifiedRequest verifiedRequest);
         IResult Delete(VerifiedRequest verifiedRequest);
         IResult Update(VerifiedRequest verifiedRequest);
-
-        IDataResult<List<VerifiedRequest>> GetAll();
-
+        IDataResult<List<RequestDto>> GetAll();
         IDataResult<VerifiedRequest> GetByRequestId(int id);
+        IDataResult<VerifiedRequest> GetRequestByUserId(int id);
     }
 }

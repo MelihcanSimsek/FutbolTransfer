@@ -46,5 +46,6 @@ namespace Business.Constants
         public static string PostUnliked = "Gönderi beğeni geri çekildi";
         public static string PostUnverified = "Gönderi onay geri çekildi";
         public static string PostVerified = "Gönderi onaylandı";
+        internal static string PasswordUpdated;
     }
 }

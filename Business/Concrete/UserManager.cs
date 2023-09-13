@@ -4,6 +4,7 @@ using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +16,23 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         IUserDal _userDal;
+        IProfileService _profileService;
         
-        public UserManager(IUserDal userDal)
+        public UserManager(IUserDal userDal,IProfileService profileService)
         {
             _userDal = userDal;
-            
+            _profileService = profileService;
         }
 
         public IResult Add(User user)
         {
             _userDal.Add(user);
+            var userForId =  GetByEmail(user.Email).Data;
+            var profile = new Profile
+            {
+                UserId = userForId.Id
+            };
+            _profileService.Add(profile);
             return new SuccessResult(Messages.UserAdded);
         }
 
@@ -54,10 +62,24 @@ namespace Business.Concrete
             return new SuccessDataResult<List<OperationClaim>>(_userDal.GetClaims(user));
         }
 
+        public IDataResult<UserInformationDto> GetUserInformationById(int id)
+        {
+            var result = _userDal.GetUserInformation(u => u.UserId == id).SingleOrDefault();
+            return new SuccessDataResult<UserInformationDto>(result);
+        }
+
         public IResult Update(User user)
         {
-            _userDal.Update(user);
+            var result = _userDal.Get(u => u.Id == user.Id);
+            result.Name = user.Name;
+            _userDal.Update(result);
             return new SuccessResult(Messages.UserUpdated);
+        }
+
+        public IResult UpdateUserPassword(User user)
+        {
+            _userDal.Update(user);
+            return new SuccessResult(Messages.PasswordUpdated);
         }
     }
 }

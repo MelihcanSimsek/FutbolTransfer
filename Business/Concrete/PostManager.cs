@@ -16,17 +16,24 @@ namespace Business.Concrete
     {
         IPostDal _postDal;
         IFollowerService _followerService;
-        public PostManager(IPostDal postDal,IFollowerService followerService)
+        IVerifyService _verifyService;
+        IUserOperationClaimService _userOperationClaimService;
+
+        public PostManager(IPostDal postDal,IFollowerService followerService,IVerifyService verifyService, IUserOperationClaimService userOperationClaimService)
         {
             _postDal = postDal;
             _followerService = followerService;
+            _verifyService = verifyService;
+            _userOperationClaimService = userOperationClaimService;
+
         }
 
-        public IResult Add(Post post)
+        public IDataResult<Post> Add(Post post)
         {
+            post.CreationDate = DateTime.Now;
             _postDal.Add(post);
             CheckIfPostIsComment(post);
-            return new SuccessResult(Messages.PostAdded);
+            return new SuccessDataResult<Post>(post,Messages.PostAdded);
         }
 
         public IResult Delete(Post post)
@@ -35,24 +42,20 @@ namespace Business.Concrete
             return new SuccessResult(Messages.PostDeleted);
         }
 
-        public IResult IncreaseFavNumberByPostId(int id)
-        {
-            var post = _postDal.Get(p => p.Id == id);
-            post.Fav = post.Fav + 1;
-            Update(post);
-            return new SuccessResult(Messages.PostLiked);
-        }
+       
 
         public IDataResult<List<Post>> GetAll()
         {
             return new SuccessDataResult<List<Post>>(_postDal.GetAll(),Messages.PostListed);
         }
 
-        public IDataResult<PostDetailDto> GetById(int postId)
+        public IDataResult<PostDetailDto> GetPostDetailById(int postId)
         {
             var post = _postDal.GetPostDetails(p => p.PostId == postId).SingleOrDefault();
             return new SuccessDataResult<PostDetailDto>(post);
         }
+
+
 
         public IDataResult<List<PostDetailDto>> GetByUserId(int userId)
         {
@@ -62,10 +65,10 @@ namespace Business.Concrete
 
         public IDataResult<List<PostDetailDto>> GetCommentsByPostId(int postId,int userId)
         {
-            var followedUserIds = _followerService.GetByFollowerId(userId).Data;
+            var followedUserIds = _followerService.GetFollowedList(userId).Data;
             var allPosts = _postDal.GetPostDetails(p => p.ParentId == postId);
             var sortedPosts = GetBestOfPosts(allPosts);
-            var nonFollowedPosts = sortedPosts.Where(p => !followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).ToList();
+            var nonFollowedPosts = sortedPosts.Where(p => !followedUserIds.Contains(p.UserId)).ToList();
             var followedPosts = sortedPosts.Where(p => followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).ToList();
             var concatenatedPosts = followedPosts.Concat(nonFollowedPosts).ToList();
             return new SuccessDataResult<List<PostDetailDto>>(concatenatedPosts);
@@ -73,13 +76,28 @@ namespace Business.Concrete
 
         public IDataResult<List<PostDetailDto>> GetMainPostWithAlgorithm(int userId)
         {
-            var followedUserIds = _followerService.GetByFollowerId(userId).Data;
-            var allPosts = _postDal.GetPostDetails(p=>p.ParentId == 0 && p.CreationDate >= DateTime.Now.AddDays(-1));
-            var sortedPosts = GetBestOfPosts(allPosts);
-            var nonFollowedPosts = sortedPosts.Where(p => !followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).Take(40);
-            var followedPosts = sortedPosts.Where(p => followedUserIds.Contains(p.UserId)).OrderByDescending(p => p.CreationDate).Take(25);
-            var unionPosts = nonFollowedPosts.Union(followedPosts).OrderByDescending(p => p.CreationDate).Take(30).ToList();
-            return new SuccessDataResult<List<PostDetailDto>>(unionPosts, Messages.PostListed);
+            var followedUserIds = _followerService.GetFollowedList(userId).Data;
+            var allPosts = _postDal.GetPostDetails(p=>p.ParentId == 0 && p.CreationDate >= DateTime.Now.AddDays(-1).Date);
+            var nonFollowedPosts = allPosts.Where(p => !followedUserIds.Contains(p.UserId)).Take(20);
+            var followedPosts = allPosts.Where(p => followedUserIds.Contains(p.UserId)).Take(20);
+            var unionPosts = nonFollowedPosts.Union(followedPosts).Take(50).ToList();
+            var sortedPosts = GetBestOfPosts(unionPosts);
+            var HourlyPosts = new List<PostDetailDto>();
+            var restOfPosts = new List<PostDetailDto>();
+            foreach (var post in sortedPosts)
+            {
+                if(post.CreationDate > DateTime.Now.AddHours(-1))
+                {
+                    HourlyPosts.Add(post);
+                }
+                else
+                {
+                    restOfPosts.Add(post);
+
+                }
+            }
+            var concatenatedPosts = HourlyPosts.Concat(restOfPosts).ToList();
+            return new SuccessDataResult<List<PostDetailDto>>(concatenatedPosts, Messages.PostListed);
         }
 
         public IResult Update(Post post)
@@ -98,50 +116,33 @@ namespace Business.Concrete
             }
         }
 
-        public IResult DecreaseFavNumberByPostId(int id)
-        {
-            var post = _postDal.Get(p => p.Id == id);
-            if(post.Fav <= 0 )
-            {
-
-                return new ErrorResult();
-            }
-            post.Fav = post.Fav - 1;
-            Update(post);
-            return new SuccessResult(Messages.PostUnliked);
-        }
-
-        public IResult IncreaseVerifyNumberByPostId(int id)
-        {
-            var post = _postDal.Get(p => p.Id == id);
-            post.Verify = post.Verify + 1;
-            Update(post);
-            return new SuccessResult(Messages.PostVerified);
-        }
-
-        public IResult DecreaseVerifyNumberByPostId(int id)
-        {
-            var post = _postDal.Get(p => p.Id == id);
-            if(post.Verify <= 0)
-            {
-                return new ErrorResult();
-            }
-            post.Verify = post.Verify - 1;
-            Update(post);
-            return new SuccessResult(Messages.PostUnverified);
-
-        }
-
         public IDataResult<List<TransferPostDto>> GetTransferPosts()
         {
-            var result = _postDal.GetTransferPosts();
-            return new SuccessDataResult<List<TransferPostDto>>(result);
+            var allTransferPost = _postDal.GetTransferPosts(tp=>tp.CreationDate >= DateTime.Now.AddDays(-1).Date);
+            var bestOfTransferPost = GetBestOfTransferPost(allTransferPost).Take(40).ToList();
+            var totalReporter = _userOperationClaimService.GetAllReporter().Data.Count;
+            var quarterReporter = totalReporter / 3;
+            foreach (var transferPost in bestOfTransferPost)
+            {
+                var totalVerifyNumber = _verifyService.GetAllByPostId(transferPost.PostId).Data.Count;
+                if (totalVerifyNumber > quarterReporter)
+                {
+                    transferPost.TransferRate = 100;
+                }
+                else
+                {
+                    transferPost.TransferRate = (int)(((float)totalVerifyNumber / (float)quarterReporter) * 100);
+                }
+
+            }
+            return new SuccessDataResult<List<TransferPostDto>>(bestOfTransferPost);
         }
 
-        public IDataResult<List<TransferPostDto>> GetTransferPostsByUserId(int id)
+        public IDataResult<List<TransferPostDto>> GetTransferPostsWithAlgorithm(int userId)
         {
-            var result = _postDal.GetTransferPosts(tp => tp.UserId == id);
-            return new SuccessDataResult<List<TransferPostDto>>(result);
+            var result = _postDal.GetTransferPosts(tp => tp.UserId == userId);
+            var sortedResult = result.OrderByDescending(tp => tp.CreationDate).ToList();
+            return new SuccessDataResult<List<TransferPostDto>>(sortedResult);
         }
 
         private List<PostDetailDto> GetBestOfPosts(List<PostDetailDto> allPosts)
@@ -149,11 +150,119 @@ namespace Business.Concrete
             var bestOfPosts = allPosts.Select(p => new
             {
                 Post = p,
-                Score = p.Fav + p.Verify * 2 + p.Comment * 3
+                Score = p.Fav.Length*3+p.Verify.Length*1+ p.Comment * 5
             }).ToList();
             var sortedPosts = bestOfPosts.OrderByDescending(p => p.Score).Select(p => p.Post).ToList();
             return sortedPosts;
         }
-        
+
+        private List<TransferPostDto> GetBestOfTransferPost(List<TransferPostDto> allTransferPost)
+        {
+            var bestOfPosts = allTransferPost.Select(p => new
+            {
+                Post = p,
+                Score = p.Fav.Length*2 + p.Verify.Length * 5 + p.Comment * 3
+            }).ToList();
+            var sortedPosts = bestOfPosts.OrderByDescending(p => p.Score).Select(p => p.Post).ToList();
+            return sortedPosts;
+        }
+
+        public IDataResult<Post> GetPostId(Post post)
+        {
+            var result = _postDal.Get(p => p.UserId == post.UserId && p.CreationDate >= post.CreationDate.AddSeconds(-30) && p.CreationDate <= post.CreationDate.AddSeconds(30) && p.Status == true);
+            return new SuccessDataResult<Post>(result);
+        }
+
+        public IDataResult<TransferPostDto> GetTransferPostById(int postId)
+        {
+            var result = _postDal.GetTransferPosts(tp => tp.PostId == postId).SingleOrDefault();
+            var totalVerifyNumber = _verifyService.GetAllByPostId(result.PostId).Data.Count;
+            var totalReporter = _userOperationClaimService.GetAllReporter().Data.Count;
+            var quarterReporter = totalReporter / 3;
+            var halfReporter = totalReporter / 2;
+            if(result.CreationDate >= DateTime.Now.AddDays(-1))
+            {
+                if(totalVerifyNumber > quarterReporter)
+                {
+                    result.TransferRate = 100;
+                }
+                else
+                {
+                    result.TransferRate = (int)(((float)totalVerifyNumber / (float)quarterReporter) * 100);
+                }
+            }
+            else if(result.CreationDate < DateTime.Now.AddDays(-1) && result.CreationDate >= DateTime.Now.AddDays(-7))
+            {
+                if(totalVerifyNumber > halfReporter )
+                {
+                    result.TransferRate = 100;
+                }
+                else
+                {
+                    result.TransferRate = (int)(((float)totalVerifyNumber / (float)halfReporter) * 100);
+                }
+            }
+            else
+            {
+                result.TransferRate = (int)(((float)totalVerifyNumber / (float)totalReporter) * 100);
+
+            }
+            return new SuccessDataResult<TransferPostDto>(result);
+        }
+
+        public IDataResult<List<TransferPostDto>> GetDailyTransferPost()
+        {
+            var dailyTransferPost = _postDal.GetTransferPosts(t => t.CreationDate >= DateTime.Now.AddDays(-1));
+            var totalReporter = _userOperationClaimService.GetAllReporter().Data.Count;
+            var quarterReporter = totalReporter / 3;
+            foreach (var transferPost in dailyTransferPost)
+            {
+                var totalVerifyNumber = _verifyService.GetAllByPostId(transferPost.PostId).Data.Count;
+                if(totalVerifyNumber > quarterReporter)
+                {
+                    transferPost.TransferRate = 100;
+                }
+                else
+                {
+                    transferPost.TransferRate = (int)(((float)totalVerifyNumber / (float)quarterReporter) * 100);
+                }
+            }
+
+            return new SuccessDataResult<List<TransferPostDto>>(dailyTransferPost);
+        }
+
+        public IDataResult<List<TransferPostDto>> GetWeeklyTransferPost()
+        {
+            var weeklyTransferPost = _postDal.GetTransferPosts(t => t.CreationDate < DateTime.Now.AddDays(-1) && t.CreationDate >= DateTime.Now.AddDays(-7));
+            var totalReporter = _userOperationClaimService.GetAllReporter().Data.Count;
+            var halfReporter = totalReporter / 2;
+            foreach (var transferPost in weeklyTransferPost)
+            {
+                var totalVerifyNumber = _verifyService.GetAllByPostId(transferPost.PostId).Data.Count;
+                if (totalVerifyNumber > halfReporter)
+                {
+                    transferPost.TransferRate = 100;
+                }
+                else
+                {
+                    transferPost.TransferRate = (int)(((float)totalVerifyNumber / (float)halfReporter) * 100);
+                }
+
+            }
+            return new SuccessDataResult<List<TransferPostDto>>(weeklyTransferPost);
+        }
+
+        public IDataResult<List<TransferPostDto>> GetMonthlyTransferPost()
+        {
+            var monthlyTransferPost = _postDal.GetTransferPosts(t => t.CreationDate >= DateTime.Now.AddDays(-30) && t.CreationDate < DateTime.Now.AddDays(-7));
+            var totalReporter = _userOperationClaimService.GetAllReporter().Data.Count;
+       
+            foreach (var transferPost in monthlyTransferPost)
+            {
+                var totalVerifyNumber = _verifyService.GetAllByPostId(transferPost.PostId).Data.Count;
+                transferPost.TransferRate =(int) (((float)totalVerifyNumber / (float)totalReporter) * 100);
+            }
+            return new SuccessDataResult<List<TransferPostDto>>(monthlyTransferPost);
+        }
     }
 }

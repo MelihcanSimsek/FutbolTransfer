@@ -32,9 +32,9 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ClubDeleted);
         }
 
-        public IDataResult<List<Club>> GetAll()
+        public IDataResult<List<Club>> GetAll(string letter)
         {
-            var result = _clubDal.GetAll();
+            var result = _clubDal.GetAll(c=>c.Team.StartsWith(letter)).OrderBy(c=>c.Team).ToList();
             return new SuccessDataResult<List<Club>>(result);
         }
 

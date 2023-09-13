@@ -33,7 +33,7 @@ namespace Business.Concrete
         public IResult BackgroundImageUpdate(IFormFile formFile, Profile profile)
         {
             var profileModel = BackgroundImageCheck(formFile, profile).Data;
-            Update(profileModel);
+            _profileDal.Update(profileModel);
             return new SuccessResult(Messages.BackgroundImageUpdated);
         }
 
@@ -50,61 +50,53 @@ namespace Business.Concrete
 
         public IDataResult<Profile> GetByUserId(int id)
         {
-            var profileModel = _profileDal.Get(p => p.UserId == id);
-            var result = BusinessRules.Run(GetDefaultBackgroundImage(profileModel));
-            if(result  != null)
-            {
-                profileModel.BackgroundImage = "DefaultBackgroundImage.jpg";
-            }
-            result = BusinessRules.Run(GetDefaultProfileImage(profileModel));
-            if(result != null)
-            {
-                profileModel.ProfileImage = "DefaultProfileImage.jpg";
-            }
-            
-            return new SuccessDataResult<Profile>(profileModel);
-           
+            var profileModel = _profileDal.Get(p => p.UserId == id);           
+            return new SuccessDataResult<Profile>(profileModel);   
         }
 
         public IResult ProfileImageUpdate(IFormFile formFile, Profile profile)
         {
             var profileModel = ProfileImageCheck(formFile, profile).Data;
-            Update(profileModel);
+            _profileDal.Update(profileModel);
             return new SuccessResult(Messages.ProfileImageUpdated);
         }
 
         public IResult Update(Profile profile)
         {
-            _profileDal.Update(profile);
+            var result = _profileDal.Get(p => p.Id == profile.Id);
+            result.WebSite = profile.WebSite;
+            result.Location = profile.Location;
+            result.Description = profile.Description;
+            _profileDal.Update(result);
             return new SuccessResult();
         }
 
         private IDataResult<Profile> BackgroundImageCheck(IFormFile file,Profile profile)
         {
-            var profileToCheck = _profileDal.Get(p => p.UserId == profile.UserId);
+            var profileToCheck = _profileDal.Get(p => p.Id == profile.Id);
             if (profileToCheck.BackgroundImage != null)
             {
-                profile.BackgroundImage = FileHelper.Update(profileToCheck.BackgroundImage, file);
+                profileToCheck.BackgroundImage = FileHelper.Update(profileToCheck.BackgroundImage, file);
             }
             else
             {
-                profile.BackgroundImage = FileHelper.Add(file);
+                profileToCheck.BackgroundImage = FileHelper.Add(file);
             }
-            return new SuccessDataResult<Profile>(profile);
+            return new SuccessDataResult<Profile>(profileToCheck);
         }
 
         private IDataResult<Profile> ProfileImageCheck(IFormFile file,Profile profile)
         {
-            var profileToCheck = _profileDal.Get(p => p.UserId == profile.UserId);
+            var profileToCheck = _profileDal.Get(p => p.Id == profile.Id);
             if(profileToCheck.ProfileImage != null)
             {
-                profile.ProfileImage = FileHelper.Update(profileToCheck.ProfileImage, file);
+                profileToCheck.ProfileImage = FileHelper.Update(profileToCheck.ProfileImage, file);
             }
             else
             {
-                profile.ProfileImage = FileHelper.Add(file);
+                profileToCheck.ProfileImage = FileHelper.Add(file);
             }
-            return new SuccessDataResult<Profile>(profile);
+            return new SuccessDataResult<Profile>(profileToCheck);
         }
 
         private IResult GetDefaultBackgroundImage(Profile profile)
@@ -119,7 +111,7 @@ namespace Business.Concrete
         }
         private IResult GetDefaultProfileImage(Profile profile)
         {
-            if (profile.ProfileImage.Length  >0)
+            if (profile.ProfileImage.Length>0)
             {
                 return new SuccessResult();
             }

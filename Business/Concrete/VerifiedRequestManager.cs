@@ -2,6 +2,7 @@
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,15 +32,21 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
-        public IDataResult<List<VerifiedRequest>> GetAll()
+        public IDataResult<List<RequestDto>> GetAll()
         {
-            var result = _requestDal.GetAll();
-            return new SuccessDataResult<List<VerifiedRequest>>(result);
+            var result = _requestDal.GetRequests();
+            return new SuccessDataResult<List<RequestDto>>(result);
         }
 
         public IDataResult<VerifiedRequest> GetByRequestId(int id)
         {
             var result = _requestDal.Get(r => r.Id == id);
+            return new SuccessDataResult<VerifiedRequest>(result);
+        }
+
+        public IDataResult<VerifiedRequest> GetRequestByUserId(int id)
+        {
+            var result = _requestDal.Get(r => r.UserId == id);
             return new SuccessDataResult<VerifiedRequest>(result);
         }
 

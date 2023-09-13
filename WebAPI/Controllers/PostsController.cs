@@ -21,7 +21,8 @@ namespace WebAPI.Controllers
             var result = _postService.Add(post);
             if(result.Success)
             {
-                return Ok(result);
+                var postWithId = _postService.GetPostId(result.Data);
+                return Ok(postWithId);
             }
             return BadRequest(result);
         }
@@ -59,16 +60,29 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
+        [HttpGet("getpostdetailbyid")]
+        public IActionResult GetPostDetailById(int id)
         {
-            var result = _postService.GetById(id);
+            var result = _postService.GetPostDetailById(id);
             if(result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
+        [HttpGet("gettransferpostbyid")]
+        public IActionResult GetTransferPostById(int id)
+        {
+            var result = _postService.GetTransferPostById(id);
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
 
         [HttpGet("getbyuserid")]
         public IActionResult GetByUserId(int id)
@@ -103,51 +117,6 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("increasefavnumberbypostid")]
-        public IActionResult IncreaseFavNumberByPostId(int id)
-        {
-            var result = _postService.IncreaseFavNumberByPostId(id);
-            if(result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("decreasefavnumberbypostid")]
-        public IActionResult DecreaseFavNumberByPostId(int id)
-        {
-            var result = _postService.DecreaseFavNumberByPostId(id);
-            if(result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("increaseverifynumberbypostid")]
-        public IActionResult IncreaseVerifyNumberByPostId(int id)
-        {
-            var result = _postService.IncreaseVerifyNumberByPostId(id);
-            if(result.Success)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest(result);
-        }
-
-        [HttpGet("decreaseverifynumberbypostid")]
-        public IActionResult DecreaseVerifyNumberByPostId(int id)
-        {
-            var result = _postService.DecreaseVerifyNumberByPostId(id);
-            if(result.Success)
-            {
-                return Ok(result);
-
-            }
-            return BadRequest(result);
-        }
 
         [HttpGet("gettransferposts")]
         public IActionResult GetTransferPosts()
@@ -163,12 +132,47 @@ namespace WebAPI.Controllers
         [HttpGet("gettransferpostsbyuserid")]
         public IActionResult GetTransferPostsByUserId(int id)
         {
-            var result = _postService.GetTransferPostsByUserId(id);
+            var result = _postService.GetTransferPostsWithAlgorithm(id);
             if(result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
         }
+
+        [HttpGet("getdailytransferpost")]
+        public IActionResult GetDailyTransferPost()
+        {
+            var result = _postService.GetDailyTransferPost();
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getweeklytransferpost")]
+        public IActionResult GetWeeklyTransferPost()
+        {
+            var result = _postService.GetWeeklyTransferPost();
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getmonthlytransferpost")]
+        public IActionResult GetMonthlyTransferPost()
+        {
+            var result = _postService.GetMonthlyTransferPost();
+            if(result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+
     }
 }
